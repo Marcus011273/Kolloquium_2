@@ -1,9 +1,4 @@
 import streamlit as st
-import subprocess
-
-installed = subprocess.run(["pip", "freeze"], capture_output=True, text=True)
-st.code(installed.stdout)
-
 import random
 import os
 import openai
