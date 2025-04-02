@@ -2,12 +2,12 @@ import streamlit as st
 import random
 import os
 import openai
-openai.api_key = api_key
 import io
 import re
 
 # 🔒 OpenAI API-Schlüssel laden
 api_key = st.secrets["OPENAI_API_KEY"]
+openai.api_key = api_key  # ← ✅ jetzt ist api_key bereits definiert
 
 if not api_key:
     st.error("Fehlender API-Schlüssel! Bitte setze eine Umgebungsvariable OPENAI_API_KEY in Streamlit Secrets.")
