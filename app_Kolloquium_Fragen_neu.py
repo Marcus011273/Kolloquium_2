@@ -1,7 +1,7 @@
 import streamlit as st
 import random
 import os
-import openai
+from openai import OpenAI
 import io
 import re
 
