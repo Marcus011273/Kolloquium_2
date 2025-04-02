@@ -133,11 +133,12 @@ if st.button("📊 Antwort analysieren"):
         - Formuliere zwei anspruchsvolle Nachfragen zur Reflexion der Argumentation.  
         """
 
-        feedback = client.chat.completions.create(
-            model="gpt-4",
-            messages=[{"role": "user", "content": gpt_prompt}],
-            max_tokens=1000
-        ).choices[0].message.content.strip()
+        feedback = openai.ChatCompletion.create(
+    model="gpt-4",
+    messages=[{"role": "user", "content": gpt_prompt}],
+    max_tokens=1000
+)["choices"][0]["message"]["content"].strip()
+
 
         st.write("### 🔎 Mein Feedback für dich")
         st.markdown(feedback)
