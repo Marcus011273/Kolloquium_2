@@ -1,6 +1,7 @@
 import streamlit as st
 import random
 import os
+import speech_recognition as sr
 from openai import OpenAI
 import io
 import re
@@ -30,6 +31,7 @@ st.write(
 
 # **📌 Fragenpool**
 fragenpool = [
+   fallbeispiele = [
     "Die gezielte Planung des Unterrichts basiert auf der kontinuierlichen Auswertung von Lernfortschritten und Zielerreichung.",
     "Lehrkräfte gestalten eine transparente Kommunikation über die verschiedenen Formen der Leistungsbewertung gegenüber den Eltern.",
     "Die Schülerinnen und Schüler werden im Unterricht systematisch zu einem bewussten und verantwortungsvollen Umgang mit Medien angeleitet.",
@@ -40,6 +42,7 @@ fragenpool = [
     "Durch projektorientierte Unterrichtsformen können grundlegende Kompetenzen gezielt angebahnt und weiterentwickelt werden.",
     "Unterschiedliche sprachliche Voraussetzungen in der Klasse machen ein zunehmend sprachsensibles Unterrichten notwendig."
 ]
+
 
 # **📌 Session State für Fragenrotation**
 if "verwendete_fragen" not in st.session_state:
@@ -144,3 +147,25 @@ if st.button("📊 Antwort analysieren"):
 
     else:
         st.warning("⚠️ Bitte gib eine Antwort ein!")
+
+
+
+
+
+
+   
+ 
+    
+    
+
+   
+
+      
+            
+  
+
+       
+
+        
+
+       
