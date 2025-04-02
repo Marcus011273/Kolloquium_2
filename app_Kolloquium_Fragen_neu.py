@@ -133,6 +133,21 @@ if st.button("📊 Antwort analysieren"):
         - Formuliere zwei anspruchsvolle Nachfragen zur Reflexion der Argumentation.  
         """
 
+        client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+        response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[{"role": "user", "content": gpt_prompt}],
+            max_tokens=1000
+        )
+
+        feedback = response.choices[0].message.content.strip()
+
+        st.write("### 🔎 Mein Feedback für dich")
+        st.markdown(feedback)
+
+    else:
+        st.warning("⚠️ Bitte gib eine Antwort ein!")
+
     
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
@@ -146,8 +161,8 @@ feedback = response.choices[0].message.content.strip()
 
 
 
-        st.write("### 🔎 Mein Feedback für dich")
-        st.markdown(feedback)
+    st.write("### 🔎 Mein Feedback für dich")
+    st.markdown(feedback)
 
     else:
         st.warning("⚠️ Bitte gib eine Antwort ein!")
