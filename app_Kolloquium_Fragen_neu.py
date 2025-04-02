@@ -5,29 +5,26 @@ from openai import OpenAI
 import io
 import re
 
-# 🔒 OpenAI API-Schlüssel laden
-api_key = st.secrets["OPENAI_API_KEY"]
-openai.api_key = api_key  # ← ✅ jetzt ist api_key bereits definiert
+# 🔐 OpenAI API-Schlüssel laden
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-if not api_key:
+if not st.secrets["OPENAI_API_KEY"]:
     st.error("Fehlender API-Schlüssel! Bitte setze eine Umgebungsvariable OPENAI_API_KEY in Streamlit Secrets.")
     st.stop()
 
-# **📌 Einführung und Beschreibung**
+# 📌 Einführung und Beschreibung
 st.title("🎓 Dein persönlicher Prüfungsassistent zur Simulation des Kolloquiums")
-st.write(
-    """
-    Das System wählt eine zufällig generierte Prüfungsfrage aus.  
-    Du hast dann **30 Minuten Zeit** für die Bearbeitung und kannst deine Lösung **schriftlich** oder **als Audio-Datei** eingeben.  
-    Falls du eine Audiodatei hochlädst, wird sie automatisch transkribiert und ausgewertet. Bitte beachte, dass die Transkription und die Auswertung einige Zeit in Anspruch nehmen können. 
-    
-    **Ich wünsche Ihnen ein erfolgreiches Kolloquium!**  
-    
-    Marcus Müller
-    """
-)
+st.write("""
+Das System wählt eine zufällig generierte Prüfungsfrage aus.  
+Du hast dann **30 Minuten Zeit** für die Bearbeitung und kannst deine Lösung **schriftlich** oder **als Audio-Datei** eingeben.  
+Falls du eine Audiodatei hochlädst, wird sie automatisch transkribiert und ausgewertet. Bitte beachte, dass die Transkription und die Auswertung einige Zeit in Anspruch nehmen können. 
 
-# **📌 Fragenpool**
+**Ich wünsche Ihnen ein erfolgreiches Kolloquium!**  
+
+Marcus Müller
+""")
+
+# 📌 Fragenpool
 fragenpool = [
     "Die gezielte Planung des Unterrichts basiert auf der kontinuierlichen Auswertung von Lernfortschritten und Zielerreichung.",
     "Lehrkräfte gestalten eine transparente Kommunikation über die verschiedenen Formen der Leistungsbewertung gegenüber den Eltern.",
@@ -40,24 +37,20 @@ fragenpool = [
     "Unterschiedliche sprachliche Voraussetzungen in der Klasse machen ein zunehmend sprachsensibles Unterrichten notwendig."
 ]
 
-
-# **📌 Session State für Fragenrotation**
+# 📌 Session State für Fragenrotation
 if "verwendete_fragen" not in st.session_state:
     st.session_state["verwendete_fragen"] = []
 
 def neue_frage_ziehen():
-    """Zieht eine neue Frage, die noch nicht gestellt wurde."""
     verbleibende_fragen = list(set(fragenpool) - set(st.session_state["verwendete_fragen"]))
-    
-    if not verbleibende_fragen:  # Falls alle Fragen durch sind, setze zurück
+    if not verbleibende_fragen:
         st.session_state["verwendete_fragen"] = []
         verbleibende_fragen = fragenpool.copy()
-
     frage = random.choice(verbleibende_fragen)
     st.session_state["verwendete_fragen"].append(frage)
     st.session_state["frage"] = frage
 
-# **Frage generieren**
+# Frage generieren
 if st.button("🔄 Zufällige Frage generieren"):
     neue_frage_ziehen()
 
@@ -66,7 +59,6 @@ if "frage" in st.session_state:
     st.info(f"**{st.session_state['frage']}**")
     st.write("⏳ Du hast 30 Minuten Zeit zur Vorbereitung. (Oder antworte sofort.)")
 
-    # **Eingabemethode wählen**
     eingabe_modus = st.radio("Wähle deine Eingabemethode:", ("Text", "Audio-Datei hochladen"))
 
     if eingabe_modus == "Text":
@@ -75,19 +67,16 @@ if "frage" in st.session_state:
             st.session_state["sprachantwort"] = antwort
 
     elif eingabe_modus == "Audio-Datei hochladen":
-        st.write("🎙️ Lade eine Audiodatei hoch (nur WAV) **(Sprechdauer ca. 10 Minuten)**")
-
+        import speech_recognition as sr
+        st.write("🎧 Lade eine Audiodatei hoch (nur WAV) **(Sprechdauer ca. 10 Minuten)**")
         uploaded_file = st.file_uploader("Datei hochladen", type=["wav"])
 
         if uploaded_file is not None:
             st.audio(uploaded_file, format="audio/wav")
-
             audio_bytes = uploaded_file.read()
-
             recognizer = sr.Recognizer()
             with sr.AudioFile(io.BytesIO(audio_bytes)) as source:
                 audio = recognizer.record(source)
-
             try:
                 text = recognizer.recognize_google(audio, language="de-DE")
                 st.write("📝 **Transkribierte Antwort:**", text)
@@ -97,7 +86,7 @@ if "frage" in st.session_state:
             except sr.RequestError:
                 st.write("❌ Fehler bei der Spracherkennung.")
 
-# **📊 Antwort analysieren & GPT-4 Feedback generieren**
+# 📊 Antwort analysieren & GPT-4 Feedback generieren
 if st.button("📊 Antwort analysieren"):
     nutzerantwort = st.session_state.get("sprachantwort", st.session_state.get("audio_text", ""))
 
@@ -133,7 +122,6 @@ if st.button("📊 Antwort analysieren"):
         - Formuliere zwei anspruchsvolle Nachfragen zur Reflexion der Argumentation.  
         """
 
-        client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
         response = client.chat.completions.create(
             model="gpt-4",
             messages=[{"role": "user", "content": gpt_prompt}],
@@ -148,28 +136,10 @@ if st.button("📊 Antwort analysieren"):
     else:
         st.warning("⚠️ Bitte gib eine Antwort ein!")
 
-    
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-response = client.chat.completions.create(
-    model="gpt-4",
-    messages=[{"role": "user", "content": gpt_prompt}],
-    max_tokens=1000
-)
+       
 
-feedback = response.choices[0].message.content.strip()
-
-
-
-    st.write("### 🔎 Mein Feedback für dich")
-    st.markdown(feedback)
-
-    else:
-        st.warning("⚠️ Bitte gib eine Antwort ein!")
-
-
-
-
+     
 
 
    
