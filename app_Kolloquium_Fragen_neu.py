@@ -13,7 +13,7 @@ if not api_key:
     st.error("Fehlender API-Schlüssel! Bitte setze eine Umgebungsvariable OPENAI_API_KEY in Streamlit Secrets.")
     st.stop()
 
-client = OpenAI(api_key=api_key)
+openai.api_key = api_key
 
 # **📌 Einführung und Beschreibung**
 st.title("🎓 Dein persönlicher Prüfungsassistent zur Simulation des Kolloquiums")
