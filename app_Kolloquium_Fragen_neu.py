@@ -1,7 +1,6 @@
 import streamlit as st
 import random
 import os
-import speech_recognition as sr
 from openai import OpenAI
 import io
 import re
