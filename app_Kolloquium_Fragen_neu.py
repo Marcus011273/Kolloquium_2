@@ -7,7 +7,7 @@ import io
 import re
 
 # 🔒 OpenAI API-Schlüssel laden
-api_key = os.getenv("OPENAI_API_KEY")
+api_key = st.secrets["OPENAI_API_KEY"]
 
 if not api_key:
     st.error("Fehlender API-Schlüssel! Bitte setze eine Umgebungsvariable OPENAI_API_KEY in Streamlit Secrets.")
