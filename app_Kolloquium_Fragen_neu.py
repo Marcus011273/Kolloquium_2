@@ -1,7 +1,8 @@
 import streamlit as st
 import random
 import os
-from openai import OpenAI
+import openai
+openai.api_key = api_key
 import io
 import re
 
