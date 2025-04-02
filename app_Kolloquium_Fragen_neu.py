@@ -1,7 +1,7 @@
 import streamlit as st
 import random
 import os
-import openai
+from openai import OpenAI
 import io
 import re
 
@@ -133,11 +133,17 @@ if st.button("📊 Antwort analysieren"):
         - Formuliere zwei anspruchsvolle Nachfragen zur Reflexion der Argumentation.  
         """
 
-        feedback = openai.ChatCompletion.create(
+    
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+
+response = client.chat.completions.create(
     model="gpt-4",
     messages=[{"role": "user", "content": gpt_prompt}],
     max_tokens=1000
-)["choices"][0]["message"]["content"].strip()
+)
+
+feedback = response.choices[0].message.content.strip()
+
 
 
         st.write("### 🔎 Mein Feedback für dich")
