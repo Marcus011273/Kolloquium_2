@@ -31,7 +31,6 @@ st.write(
 
 # **📌 Fragenpool**
 fragenpool = [
-   fallbeispiele = [
     "Die gezielte Planung des Unterrichts basiert auf der kontinuierlichen Auswertung von Lernfortschritten und Zielerreichung.",
     "Lehrkräfte gestalten eine transparente Kommunikation über die verschiedenen Formen der Leistungsbewertung gegenüber den Eltern.",
     "Die Schülerinnen und Schüler werden im Unterricht systematisch zu einem bewussten und verantwortungsvollen Umgang mit Medien angeleitet.",
